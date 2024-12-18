@@ -66,3 +66,12 @@ export class TooManyRequestsError extends BaseError {
     })
   }
 }
+
+export class ValidationError extends BaseError {
+  constructor(data?: ErrorCreateParams) {
+    super({
+      ...data,
+      httpStatus: 400, 
+    });
+  }
+}

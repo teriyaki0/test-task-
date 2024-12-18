@@ -8,9 +8,22 @@ datasource db {
 }
 
 model User {
-  id                              String                @id @default(uuid())
-  email                           String?               @unique
-  password                        String?
-  avatar                          String?
-  created_at                      DateTime              @default(now())
+  id         String     @id @default(uuid())
+  email      String?    @unique
+  password   String?
+  avatar     String?
+  created_at DateTime   @default(now())
+  feedbacks  Feedback[] @relation("UserFeedbacks")
+}
+
+model Feedback {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  category    String
+  status      String
+  author_id   String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  author      User     @relation("UserFeedbacks", fields: [author_id], references: [id])
 }

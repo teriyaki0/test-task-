@@ -9,3 +9,14 @@ export interface AuthRequest extends Express.Request {
     id: string;
   };
 }
+
+export interface FeedbackRequest extends Express.Request {
+  feedback: {
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    status: string;
+    authorId: string;
+  };
+}
