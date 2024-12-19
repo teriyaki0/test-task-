@@ -1,5 +1,5 @@
-import { check } from 'express-validator'
-import { validateSchema } from '../../middlewares'
+import { check, header } from 'express-validator'
+import { authRequired, validateSchema } from '../../middlewares'
 
 /**
   * @openapi
@@ -25,6 +25,8 @@ import { validateSchema } from '../../middlewares'
   *           description: The status of the feedback (e.g., "new", "resolved")
   */
 export const createFeedbackRules = [
+  header('authorization').exists().notEmpty().isString(),
+  authRequired({}),
   check('title').exists().notEmpty().isString(),
   check('description').exists().notEmpty().isString(),
   check('category').exists().notEmpty().isString(),

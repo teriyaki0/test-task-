@@ -57,7 +57,7 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      *       content:
      *         application/json:
      *           schema:
-     *            $ref: '#/components/rules/CreateFeedback'
+     *                $ref: '#/components/rules/createFeedback'
      *     responses:
      *       201:
      *         description: Created feedback.

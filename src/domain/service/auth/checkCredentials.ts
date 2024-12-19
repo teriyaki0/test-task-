@@ -23,7 +23,8 @@ export const buildCheckCredentials = ({userRepository}: Adapter): CheckCredentia
         id: true,
         email: true,
         avatar: true,
-        created_at: true
+        created_at: true,
+        password: true,
       }
     }) 
 
