@@ -9,7 +9,8 @@ import { authRequired, validateSchema } from '../../middlewares'
   *       required:
   *         - title
   *         - description
-  *         - category
+  *         - categoryId
+  *         - statusId
   *       properties:
   *         title:
   *           type: string
@@ -17,20 +18,20 @@ import { authRequired, validateSchema } from '../../middlewares'
   *         description:
   *           type: string
   *           description: The description of the feedback
-  *         category:
+  *         categoryId:
   *           type: string
-  *           description: The category of the feedback
-  *         status:
+  *           description: The category ID of the feedback
+  *         statusId:
   *           type: string
-  *           description: The status of the feedback (e.g., "new", "resolved")
+  *           description: The status ID of the feedback (e.g., "new", "resolved")
   */
 export const createFeedbackRules = [
-  header('authorization').exists().notEmpty().isString(),
+  header('authorization').exists().notEmpty().isString().withMessage('Authorization header is required and must be a string.'),
   authRequired({}),
-  check('title').exists().notEmpty().isString(),
-  check('description').exists().notEmpty().isString(),
-  check('category').exists().notEmpty().isString(),
-  check('status').optional().isString(),
+  check('title').exists().notEmpty().isString().withMessage('Title is required and must be a string.'),
+  check('description').exists().notEmpty().isString().withMessage('Description is required and must be a string.'),
+  check('categoryId').exists().notEmpty().isString().withMessage('Category ID is required and must be a string.'),
+  check('statusId').exists().notEmpty().isString().withMessage('Status ID is required and must be a string.'),
   validateSchema
 ];
 
@@ -51,21 +52,21 @@ export const createFeedbackRules = [
   *         description:
   *           type: string
   *           description: The description of the feedback
-  *         category:
+  *         categoryId:
   *           type: string
-  *           description: The category of the feedback
-  *         status:
+  *           description: The category ID of the feedback
+  *         statusId:
   *           type: string
-  *           description: The status of the feedback
+  *           description: The status ID of the feedback
   */
 export const updateFeedbackRules = [
-  header('authorization').exists().notEmpty().isString(),
+  header('authorization').exists().notEmpty().isString().withMessage('Authorization header is required and must be a string.'),
   authRequired({}),
-  check('id').exists().notEmpty().isString(),
-  check('title').optional().isString(),
-  check('description').optional().isString(),
-  check('category').optional().isString(),
-  check('status').optional().isString(),
+  check('id').exists().notEmpty().isString().withMessage('Feedback ID is required and must be a string.'),
+  check('title').optional().isString().withMessage('Title must be a string if provided.'),
+  check('description').optional().isString().withMessage('Description must be a string if provided.'),
+  check('categoryId').optional().isString().withMessage('Category ID must be a string if provided.'),
+  check('statusId').optional().isString().withMessage('Status ID must be a string if provided.'),
   validateSchema
 ];
 
@@ -82,9 +83,9 @@ export const updateFeedbackRules = [
   *           description: The ID of the feedback to retrieve
   */
 export const getFeedbackRules = [
-  header('authorization').exists().notEmpty().isString(),
+  header('authorization').exists().notEmpty().isString().withMessage('Authorization header is required and must be a string.'),
   authRequired({}),
-  check('id').exists().notEmpty().isString(),
+  check('id').exists().notEmpty().isString().withMessage('Feedback ID is required and must be a string.'),
   validateSchema
 ];
 
@@ -101,9 +102,9 @@ export const getFeedbackRules = [
   *           description: The ID of the feedback to delete
   */
 export const deleteFeedbackRules = [
-  header('authorization').exists().notEmpty().isString(),
+  header('authorization').exists().notEmpty().isString().withMessage('Authorization header is required and must be a string.'),
   authRequired({}),
-  check('id').exists().notEmpty().isString(),
+  check('id').exists().notEmpty().isString().withMessage('Feedback ID is required and must be a string.'),
   validateSchema
 ];
 

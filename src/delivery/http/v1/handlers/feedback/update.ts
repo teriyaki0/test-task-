@@ -13,9 +13,9 @@ export type UpdateFeedback = (
 export const buildUpdateFeedback = ({ feedback }: Params): UpdateFeedback => {
   return async (req, res) => {
     const { id } = req.params;
-    const { title, description, category, status } = req.body;
+    const { title, description, categoryId, statusId } = req.body;
 
-    if (!title && !description && !category && !status) {
+    if (!title && !description && !categoryId && !statusId) {
       throw new InvalidDataError({
         message: 'At least one field must be provided to update',
         code: 'MISSING_FIELDS',
@@ -37,8 +37,8 @@ export const buildUpdateFeedback = ({ feedback }: Params): UpdateFeedback => {
       id,
       title,
       description,
-      category,
-      status,
+      categoryId,
+      statusId,
     });
 
     return res.status(200).json(updatedFeedback);

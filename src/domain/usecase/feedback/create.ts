@@ -5,14 +5,14 @@ import { ValidationError } from '@/domain/errors';
 export type Create = (data: {
   title: string;
   description: string;
-  category: string;
-  status: string;
-  author_id: string;
+  categoryId: string;
+  statusId: string;
+  authorId: string; 
 }) => Promise<IFeedback | never>;
 
 export const buildCreate = ({ adapter }: UseCaseParams): Create => {
-  return async ({ title, description, category, status, author_id }) => {
-    if (!title || !description || !category || !status || !author_id) {
+  return async ({ title, description, categoryId, statusId, authorId }) => {
+    if (!title || !description || !categoryId || !statusId || !authorId) {
       throw new ValidationError({
         code: 'FEEDBACK_VALIDATION_FAILED',
         message: 'All fields are required.',
@@ -23,9 +23,15 @@ export const buildCreate = ({ adapter }: UseCaseParams): Create => {
       data: {
         title,
         description,
-        category,
-        status,
-        author_id,
+        category: {
+          connect: { id: categoryId },
+        },
+        status: {
+          connect: { id: statusId },
+        },
+        author: { 
+          connect: { id: authorId }
+        },
       },
     });
 

@@ -16,14 +16,32 @@ model User {
   feedbacks  Feedback[] @relation("UserFeedbacks")
 }
 
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  feedbacks   Feedback[] @relation("FeedbackCategory")
+}
+
+model Status {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  feedbacks   Feedback[] @relation("FeedbackStatus")
+}
+
 model Feedback {
   id          String   @id @default(uuid())
   title       String
   description String
-  category    String
-  status      String
+  category_id String?
+  status_id   String?
   author_id   String
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   author      User     @relation("UserFeedbacks", fields: [author_id], references: [id])
+  category    Category? @relation("FeedbackCategory", fields: [category_id], references: [id])
+  status      Status?   @relation("FeedbackStatus", fields: [status_id], references: [id])
 }

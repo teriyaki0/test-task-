@@ -6,12 +6,12 @@ export type Update = (data: {
   id: string;
   title?: string;
   description?: string;
-  category?: string;
-  status?: string;
+  categoryId?: string;  // Обновляем с использованием ID категории
+  statusId?: string;    // Обновляем с использованием ID статуса
 }) => Promise<IFeedback | never>;
 
 export const buildUpdate = ({ adapter }: UseCaseParams): Update => {
-  return async ({ id, title, description, category, status }) => {
+  return async ({ id, title, description, categoryId, statusId }) => {
     const feedback = await adapter.feedbackRepository.get({
       where: { id },
     });
@@ -27,10 +27,11 @@ export const buildUpdate = ({ adapter }: UseCaseParams): Update => {
       data: {
         title: title || feedback.title,
         description: description || feedback.description,
-        category: category || feedback.category,
-        status: status || feedback.status,
+        category: categoryId ? { connect: { id: categoryId } } : undefined,
+        status: statusId ? { connect: { id: statusId } } : undefined
       },
     });
+    
 
     return updatedFeedback;
   };

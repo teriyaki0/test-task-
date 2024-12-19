@@ -20,3 +20,8 @@ export interface FeedbackRequest extends Express.Request {
     authorId: string;
   };
 }
+
+export type CategoryStatusMethods = {
+  getCategories: () => string[]; 
+  getStatuses: () => string[];
+};
