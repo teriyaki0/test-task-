@@ -59,6 +59,8 @@ export const createFeedbackRules = [
   *           description: The status of the feedback
   */
 export const updateFeedbackRules = [
+  header('authorization').exists().notEmpty().isString(),
+  authRequired({}),
   check('id').exists().notEmpty().isString(),
   check('title').optional().isString(),
   check('description').optional().isString(),
@@ -80,6 +82,8 @@ export const updateFeedbackRules = [
   *           description: The ID of the feedback to retrieve
   */
 export const getFeedbackRules = [
+  header('authorization').exists().notEmpty().isString(),
+  authRequired({}),
   check('id').exists().notEmpty().isString(),
   validateSchema
 ];
@@ -97,6 +101,8 @@ export const getFeedbackRules = [
   *           description: The ID of the feedback to delete
   */
 export const deleteFeedbackRules = [
+  header('authorization').exists().notEmpty().isString(),
+  authRequired({}),
   check('id').exists().notEmpty().isString(),
   validateSchema
 ];

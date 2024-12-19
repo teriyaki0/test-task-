@@ -40,8 +40,7 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      */
     namespace.get(
       '/',
-      createRouteHandler(methods.getAll)
-      
+      createRouteHandler(methods.getAll),
     );
 
     /**
@@ -69,8 +68,9 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
 
     namespace.post(
       '/',
+      createFeedbackRules,
       createRouteHandler(methods.create),
-      createFeedbackRules
+      
     );
 
     /**
@@ -119,7 +119,7 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/UpdateFeedback'
+     *                $ref: '#/components/rules/updateFeedback'
      *     responses:
      *       200:
      *         description: Updated feedback.
