@@ -6,12 +6,14 @@ import { buildUpdateFeedback, UpdateFeedback } from './update';
 import { buildDeleteFeedback, DeleteFeedback } from './detete';
 import { DeliveryParams } from '@/delivery/types';
 import { createRouteHandler } from '../../routeHandler';
-import { getFeedbackRules, deleteFeedbackRules, createFeedbackRules, updateFeedbackRules  } from './rules';
+import { getFeedbackRules, deleteFeedbackRules, createFeedbackRules, updateFeedbackRules, paginationRules } from './rules';
 import { IHandler } from '../types';
+import { buildGetPaginatedFeedbacks, GetPaginatedFeedbacks } from './pagination';
 
 type Params = Pick<DeliveryParams, 'feedback'>;
 
 export type FeedbackMethods = {
+  pagination: GetPaginatedFeedbacks;
   create: CreateFeedback;
   get: GetFeedback;
   update: UpdateFeedback;
@@ -22,6 +24,42 @@ export type FeedbackMethods = {
 const buildFeedbackRoutes = (methods: FeedbackMethods) => {
   return (root: Express.Router) => {
     const namespace = Express.Router();
+
+    /**
+     * @openapi
+     * /feedback/pagination:
+     *   get:
+     *     tags: [Feedback]
+     *     produces:
+     *       - application/json
+     *     parameters:
+     *       - in: query
+     *         name: page
+     *         required: false
+     *         schema:
+     *           type: integer
+     *           default: 1
+     *       - in: query
+     *         name: pageSize
+     *         required: false
+     *         schema:
+     *           type: integer
+     *           default: 10
+     *     responses:
+     *       200:
+     *         description: Paginated feedbacks.
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: '#/components/schemas/Feedback'
+     */
+    namespace.get(
+      '/pagination',
+      paginationRules,
+      createRouteHandler(methods.pagination)
+    );
 
     /**
      * @openapi
@@ -70,7 +108,6 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
       '/',
       createFeedbackRules,
       createRouteHandler(methods.create),
-      
     );
 
     /**
@@ -167,6 +204,7 @@ export const buildFeedbackHandler = (params: Params): IHandler => {
   const update = buildUpdateFeedback(params);
   const deleteFeedback = buildDeleteFeedback(params);
   const getAll = buildGetAllFeedbacks(params);
+  const pagination = buildGetPaginatedFeedbacks(params);
 
   return {
     registerRoutes: buildFeedbackRoutes({
@@ -174,7 +212,8 @@ export const buildFeedbackHandler = (params: Params): IHandler => {
       get,
       update,
       getAll,
-      delete: deleteFeedback
+      delete: deleteFeedback,
+      pagination
     })
   };
 };

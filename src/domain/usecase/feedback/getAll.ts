@@ -2,7 +2,8 @@ import { UseCaseParams } from '@/domain/usecase/types';
 import { IFeedback } from '@/domain/entity/feedback';
 import { NotFoundError } from '@/domain/errors';
 
-export type ListAll = () => Promise<IFeedback[] | never>;
+export type ListAll = (
+) => Promise<IFeedback[] | never>;
 
 export const buildListAll = ({ adapter }: UseCaseParams): ListAll => {
   return async () => {

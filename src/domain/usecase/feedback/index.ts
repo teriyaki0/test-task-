@@ -1,16 +1,16 @@
 import { UseCaseParams } from '@/domain/usecase/types';
 import { buildCreate, Create } from './create';
 import { buildGet, Get } from './get';
-// import { buildList, List } from './pagination';
 import { buildUpdate, Update } from './update';
 import { buildDelete, Delete } from './delete';
 import { buildListAll, ListAll } from './getAll';
+import { buildListPaginated, ListPaginated } from './pagination';
 
 
 export type FeedbackUseCase = {
   create: Create;
   get: Get;
-  // list: List;
+  pagination: ListPaginated;
   update: Update;
   delete: Delete;
   getAll: ListAll;
@@ -19,16 +19,15 @@ export type FeedbackUseCase = {
 export const buildFeedbackUseCase = (params: UseCaseParams): FeedbackUseCase => {
   const create = buildCreate(params);
   const get = buildGet(params);
-  // const list = buildList(params);
+  const pagination = buildListPaginated(params);
   const getAll = buildListAll(params);
-
   const update = buildUpdate(params);
   const deleteFeedback = buildDelete(params);
 
   return {
     create,
+    pagination,
     get,
-    // list,
     getAll,
     update,
     delete: deleteFeedback,

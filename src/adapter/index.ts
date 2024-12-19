@@ -10,9 +10,9 @@ export type Adapter = {
 }
 
 export const buildAdapter = (params: AdapterParams): Adapter => {
+  const feedbackRepository = buildFeedbackRepository(params);
   const userRepository = buildUserRepository(params);
   const exampleGateway = buildExampleGateway(params);
-  const feedbackRepository = buildFeedbackRepository(params);
 
   return {
     feedbackRepository,

@@ -106,3 +106,28 @@ export const deleteFeedbackRules = [
   check('id').exists().notEmpty().isString(),
   validateSchema
 ];
+
+/**
+ * @openapi
+ * components:
+ *   rules:
+ *     pagination:
+ *       properties:
+ *         page:
+ *           type: integer
+ *           description: The page number for pagination
+ *         pageSize:
+ *           type: integer
+ *           description: The number of items per page
+ */
+export const paginationRules = [
+  check('page')
+    .optional()
+    .isInt({ gt: 0 })
+    .withMessage('Page must be a positive integer greater than 0'),
+  check('pageSize')
+    .optional()
+    .isInt({ gt: 0 })
+    .withMessage('PageSize must be a positive integer greater than 0'),
+  validateSchema,
+];
