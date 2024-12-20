@@ -4,8 +4,7 @@ import { buildDelete, Delete } from './delete';
 import { buildUpdate, Update } from './update';
 import { buildCreate, Create } from './create';
 import { buildGet, Get } from './get';
-import { buildGetAll, GetAll } from './getAll';
-import { buildGetPaginated, GetPaginated } from './getPaginated';
+import { buildList, List } from './list';
 
 type Params = Pick<AdapterParams, 'db'>;
 
@@ -14,9 +13,8 @@ export type FeedbackRepository = {
   create: Create;
   delete: Delete;
   get: Get;
-  getAll: GetAll;
   update: Update;
-  getPaginated: GetPaginated;
+  list: List;
 };
 
 export const buildFeedbackRepository = (params: Params): FeedbackRepository => {
@@ -24,8 +22,7 @@ export const buildFeedbackRepository = (params: Params): FeedbackRepository => {
   const create = buildCreate(params);
   const deleteFeedback = buildDelete(params);
   const get = buildGet(params);
-  const getAll = buildGetAll(params);
-  const getPaginated = buildGetPaginated(params)
+  const list = buildList(params)
   const update = buildUpdate(params);
 
   return {
@@ -34,7 +31,6 @@ export const buildFeedbackRepository = (params: Params): FeedbackRepository => {
     delete: deleteFeedback,
     get,
     update,
-    getAll,
-    getPaginated
+    list
   };
 };

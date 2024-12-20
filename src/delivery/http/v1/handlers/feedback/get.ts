@@ -1,36 +1,42 @@
 import { Response } from 'express';
 import { AuthRequest } from '../types';
 import { DeliveryParams } from '@/delivery/types';
-import { NotFoundError } from '@/domain/errors';
 
 type Params = Pick<DeliveryParams, 'feedback'>;
 
-export type GetFeedbacks = (
+export type Get = (
   req: AuthRequest,
   res: Response
 ) => Promise<Response>;
 
-export const buildGetFeedbacks = ({
-  feedback,
-}: Params): GetFeedbacks => {
+export const buildGet = ({ feedback }: Params): Get => {
   return async (req, res) => {
     const page = Number(req.query.page) || 1;
     const pageSize = Number(req.query.pageSize) || 10;
 
+    const filters = {
+      category: req.query.category as string | undefined,
+      status: req.query.status as string | undefined,
+    };
 
-    const { feedbacks, total } = await feedback.pagination({ page, pageSize });
-    if (!feedbacks || feedbacks.length === 0) {
-      throw new NotFoundError({
-        message: 'No feedbacks found for the given parameters',
-        code: 'FEEDBACKS_NOT_FOUND',
-      });
-    }
+    const allowedSortBy: Array<'createdAt' | 'votes'> = ['createdAt', 'votes'];
+    const sortBy = allowedSortBy.includes(req.query.sortBy as any)
+      ? (req.query.sortBy as 'createdAt' | 'votes')
+      : 'createdAt'; 
 
-    return res.status(200).json({
-      feedbacks,
-      total,
-      page: Number(page),
-      pageSize: Number(pageSize),
+    const allowedSortOrder: Array<'asc' | 'desc'> = ['asc', 'desc'];
+    const sortOrder = allowedSortOrder.includes(req.query.sortOrder as any)
+      ? (req.query.sortOrder as 'asc' | 'desc')
+      : 'desc'; 
+
+    const data = await feedback.list({
+      page,
+      pageSize,
+      filters,
+      sortBy,
+      sortOrder,
     });
+
+    return res.status(200).json(data);
   };
 };

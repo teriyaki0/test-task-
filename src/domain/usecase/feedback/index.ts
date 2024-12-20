@@ -3,32 +3,28 @@ import { buildCreate, Create } from './create';
 import { buildGet, Get } from './get';
 import { buildUpdate, Update } from './update';
 import { buildDelete, Delete } from './delete';
-import { buildListAll, ListAll } from './getAll';
-import { buildListPaginated, ListPaginated } from './pagination';
+import { buildList, List } from './list';
 
 
 export type FeedbackUseCase = {
   create: Create;
   get: Get;
-  pagination: ListPaginated;
+  list: List;
   update: Update;
   delete: Delete;
-  getAll: ListAll;
 };
 
 export const buildFeedbackUseCase = (params: UseCaseParams): FeedbackUseCase => {
   const create = buildCreate(params);
   const get = buildGet(params);
-  const pagination = buildListPaginated(params);
-  const getAll = buildListAll(params);
+  const list = buildList(params);
   const update = buildUpdate(params);
   const deleteFeedback = buildDelete(params);
 
   return {
     create,
-    pagination,
+    list,
     get,
-    getAll,
     update,
     delete: deleteFeedback,
   };

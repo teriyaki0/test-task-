@@ -6,8 +6,8 @@ export type Update = (data: {
   id: string;
   title?: string;
   description?: string;
-  categoryId?: string;  // Обновляем с использованием ID категории
-  statusId?: string;    // Обновляем с использованием ID статуса
+  categoryId?: string;  
+  statusId?: string;    
 }) => Promise<IFeedback | never>;
 
 export const buildUpdate = ({ adapter }: UseCaseParams): Update => {

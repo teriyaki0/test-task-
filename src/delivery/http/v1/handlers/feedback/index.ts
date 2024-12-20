@@ -5,20 +5,20 @@ import { buildUpdateFeedback, UpdateFeedback } from './update';
 import { buildDeleteFeedback, DeleteFeedback } from './detete';
 import { DeliveryParams } from '@/delivery/types';
 import { createRouteHandler } from '../../routeHandler';
-import { getFeedbackRules, deleteFeedbackRules, createFeedbackRules, updateFeedbackRules, paginationRules, upvoteFeedbackRules } from './rules';
+import { getFeedbackRules, deleteFeedbackRules, createFeedbackRules, updateFeedbackRules, upvoteFeedbackRules } from './rules';
 import { IHandler } from '../types';
-import { buildGetFeedbacks, GetFeedbacks } from './get';
 import { buildUpvoteFeedback, UpvoteFeedback } from './upvote';
+import { buildGet, Get } from './get';
 
 type Params = Pick<DeliveryParams, 'feedback' | 'upvote'>;
 
 export type FeedbackMethods = {
-  get: GetFeedbacks;
   create: CreateFeedback;
   getById: GetByIdFeedback;
   update: UpdateFeedback;
   delete: DeleteFeedback;
   upvote: UpvoteFeedback;
+  get: Get;
 };
 
 const buildFeedbackRoutes = (methods: FeedbackMethods) => {
@@ -38,29 +38,62 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      *         required: false
      *         schema:
      *           type: integer
-     *           default: 1
+     *         description: Page number for pagination
      *       - in: query
      *         name: pageSize
      *         required: false
      *         schema:
      *           type: integer
-     *           default: 10
+     *         description: Number of items per page
+     *       - in: query
+     *         name: category
+     *         required: false
+     *         schema:
+     *           type: string
+     *         description: Filter by category
+     *       - in: query
+     *         name: status
+     *         required: false
+     *         schema:
+     *           type: string
+     *         description: Filter by status
+     *       - in: query
+     *         name: sortBy
+     *         required: false
+     *         schema:
+     *           type: string
+     *           enum: [createdAt, votes]
+     *         description: Sort by field
+     *       - in: query
+     *         name: sortOrder
+     *         required: false
+     *         schema:
+     *           type: string
+     *           enum: [asc, desc]
+     *         description: Sort order
      *     responses:
      *       200:
-     *         description: Paginated feedbacks.
+     *         description: Paginated list of feedbacks
      *         content:
      *           application/json:
      *             schema:
-     *               type: array
-     *               items:
-     *                 $ref: '#/components/schemas/Feedback'
+     *               type: object
+     *               properties:
+     *                 feedbacks:
+     *                   type: array
+     *                   items:
+     *                     $ref: '#/components/schemas/Feedback'
+     *                 total:
+     *                   type: integer
+     *                 page:
+     *                   type: integer
+     *                 pageSize:
+     *                   type: integer
      */
     namespace.get(
       '/',
-      paginationRules,
-      createRouteHandler(methods.get)
+      createRouteHandler(methods.get) 
     );
-
 
     /**
      * @openapi
@@ -212,15 +245,15 @@ export const buildFeedbackHandler = (params: Params): IHandler => {
   const getById = buildGetByIdFeedback(params);
   const update = buildUpdateFeedback(params);
   const deleteFeedback = buildDeleteFeedback(params);
-  const get = buildGetFeedbacks(params);
+  const get = buildGet(params);
 
   return {
     registerRoutes: buildFeedbackRoutes({
+      get,
       create,
       getById,
       update,
       delete: deleteFeedback,
-      get,
       upvote
     })
   };
