@@ -25,6 +25,7 @@ export const buildGet = ({ adapter }: UseCaseParams): Get => {
 
     if (!feedback) {
       throw new NotFoundError({
+        message: 'No feedbacks found for the given parameters',
         code: 'FEEDBACK_NOT_FOUND',
       });
     }

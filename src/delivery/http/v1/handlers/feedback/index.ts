@@ -2,10 +2,10 @@ import Express from 'express';
 import { buildCreateFeedback, CreateFeedback } from './create';
 import { buildGetByIdFeedback, GetByIdFeedback } from './getById';
 import { buildUpdateFeedback, UpdateFeedback } from './update';
-import { buildDeleteFeedback, DeleteFeedback } from './detete';
+import { buildDeleteFeedback, DeleteFeedback } from './delete';
 import { DeliveryParams } from '@/delivery/types';
 import { createRouteHandler } from '../../routeHandler';
-import { getFeedbackRules, deleteFeedbackRules, createFeedbackRules, updateFeedbackRules, upvoteFeedbackRules } from './rules';
+import { getFeedbackRules, deleteFeedbackRules, createFeedbackRules, updateFeedbackRules, upvoteFeedbackRules, getFeedbacksRules } from './rules';
 import { IHandler } from '../types';
 import { buildUpvoteFeedback, UpvoteFeedback } from './upvote';
 import { buildGet, Get } from './get';
@@ -38,39 +38,45 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      *         required: false
      *         schema:
      *           type: integer
-     *         description: Page number for pagination
+     *           description: The page number for pagination
+     *           example: 1
      *       - in: query
      *         name: pageSize
      *         required: false
      *         schema:
      *           type: integer
-     *         description: Number of items per page
+     *           description: The number of items per page
+     *           example: 10
      *       - in: query
      *         name: category
      *         required: false
      *         schema:
      *           type: string
-     *         description: Filter by category
+     *           description: Filter by category
+     *           example: "electronics"
      *       - in: query
      *         name: status
      *         required: false
      *         schema:
      *           type: string
-     *         description: Filter by status
+     *           description: Filter by status
+     *           example: "active"
      *       - in: query
      *         name: sortBy
      *         required: false
      *         schema:
      *           type: string
      *           enum: [createdAt, votes]
-     *         description: Sort by field
+     *           description: Sort by field
+     *           example: "createdAt"
      *       - in: query
      *         name: sortOrder
      *         required: false
      *         schema:
      *           type: string
      *           enum: [asc, desc]
-     *         description: Sort order
+     *           description: Sort order
+     *           example: "asc"
      *     responses:
      *       200:
      *         description: Paginated list of feedbacks
@@ -82,7 +88,7 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      *                 feedbacks:
      *                   type: array
      *                   items:
-     *                     $ref: '#/components/schemas/Feedback'
+     *                     $ref: '#/components/entities/Feedback'
      *                 total:
      *                   type: integer
      *                 page:
@@ -92,8 +98,38 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      */
     namespace.get(
       '/',
-      createRouteHandler(methods.get) 
+      getFeedbacksRules,
+      createRouteHandler(methods.get)
     );
+
+    
+    /**
+     * @openapi
+     * /feedback/{id}:
+     *   get:
+     *     tags: [Feedback]
+     *     produces:
+     *       - application/json
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Retrieved feedback.
+     *         content:
+     *           application/json:
+     *             schema:
+     *                      $ref: '#/components/entities/Feedback'
+     */
+    namespace.get(
+      '/:id',
+      getFeedbackRules,
+      createRouteHandler(methods.getById),
+    );
+    
 
     /**
      * @openapi
@@ -115,40 +151,12 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: '#/components/schemas/Feedback'
+     *                $ref: '#/components/entities/Feedback'
      */
-
     namespace.post(
       '/',
       createFeedbackRules,
       createRouteHandler(methods.create),
-    );
-
-    /**
-     * @openapi
-     * /feedback/{id}:
-     *   get:
-     *     tags: [Feedback]
-     *     produces:
-     *       - application/json
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         required: true
-     *         schema:
-     *           type: string
-     *     responses:
-     *       200:
-     *         description: Retrieved feedback.
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: '#/components/schemas/Feedback'
-     */
-    namespace.get(
-      '/:id',
-      createRouteHandler(methods.getById),
-      getFeedbackRules
     );
 
     /**
@@ -177,12 +185,13 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: '#/components/schemas/Feedback'
+     *               $ref: '#/components/entities/Feedback'
      */
     namespace.put(
       '/:id',
+      updateFeedbackRules,
       createRouteHandler(methods.update),
-      updateFeedbackRules
+      
     );
 
     /**
@@ -204,8 +213,9 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      */
     namespace.delete(
       '/:id',
+      deleteFeedbackRules,
       createRouteHandler(methods.delete),
-      deleteFeedbackRules
+      
     );
 
     /**
@@ -227,7 +237,7 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: '#/components/schemas/Feedback'
+     *               $ref: '#/components/entities/Feedback'
      */
     namespace.post(
       '/:id/upvote',
@@ -241,8 +251,8 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
 
 export const buildFeedbackHandler = (params: Params): IHandler => {
   const upvote = buildUpvoteFeedback(params);
-  const create = buildCreateFeedback(params);
   const getById = buildGetByIdFeedback(params);
+  const create = buildCreateFeedback(params);
   const update = buildUpdateFeedback(params);
   const deleteFeedback = buildDeleteFeedback(params);
   const get = buildGet(params);
@@ -250,8 +260,8 @@ export const buildFeedbackHandler = (params: Params): IHandler => {
   return {
     registerRoutes: buildFeedbackRoutes({
       get,
-      create,
       getById,
+      create,
       update,
       delete: deleteFeedback,
       upvote

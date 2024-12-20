@@ -1,6 +1,6 @@
 import { UseCaseParams } from '@/domain/usecase/types';
 import { IFeedback } from '@/domain/entity/feedback';
-import { ValidationError } from '@/domain/errors';
+import { NotFoundError } from '@/domain/errors';
 
 export type Upvote = (data: {
   feedbackId: string;
@@ -9,10 +9,15 @@ export type Upvote = (data: {
 
 export const buildUpvote = ({ adapter }: UseCaseParams): Upvote => {
   return async ({ feedbackId, userId }) => {
-    if (!feedbackId || !userId) {
-      throw new ValidationError({
-        code: 'UPVOTE_VALIDATION_FAILED',
-        message: 'Feedback ID and User ID are required.',
+
+    const feedback = await adapter.feedbackRepository.get({
+      where: { id: feedbackId },
+    });
+
+    if (!feedback || !userId) {
+      throw new NotFoundError({
+        message: 'No feedbacks found for the given parameters',
+        code: 'FEEDBACK_NOT_FOUND',
       });
     }
 

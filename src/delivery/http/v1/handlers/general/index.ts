@@ -1,10 +1,19 @@
-import Express, { Response } from 'express';
+import Express from 'express';
 import { createRouteHandler } from '../../routeHandler';
-import { AuthRequest, IHandler } from '../types';
-import { getCategoriesFromPrisma } from './category';
-import { getStatusesFromPrisma } from './status';
+import {  IHandler } from '../types';
+import { buildGetCategories, getCategories } from './category';
+import { DeliveryParams } from '@/delivery/types';
+import { buildGetStatuses, getStatuses } from './status';
 
-const buildGeneralRoutes = () => {
+export type GeneralMethods = {
+  category: getCategories;
+  status: getStatuses;
+};
+
+type Params = Pick<DeliveryParams, 'category' | 'status'>;
+
+
+const buildGeneralRoutes = (methods: GeneralMethods) => {
   return (root: Express.Router) => {
     const namespace = Express.Router();
 
@@ -31,11 +40,8 @@ const buildGeneralRoutes = () => {
      */
     namespace.get(
       '/categories',
-      createRouteHandler(async (req: AuthRequest, res: Response) => {
-        const categories = await getCategoriesFromPrisma();
-        return res.json(categories); 
-      })
-    );
+      createRouteHandler(methods.category)
+    )
 
     /**
      * @openapi
@@ -60,10 +66,7 @@ const buildGeneralRoutes = () => {
      */
     namespace.get(
       '/statuses',
-      createRouteHandler(async (req: AuthRequest, res: Response) => {
-        const statuses = await getStatusesFromPrisma();
-        return res.json(statuses); 
-      })
+      createRouteHandler(methods.status)
     );
 
 
@@ -71,8 +74,14 @@ const buildGeneralRoutes = () => {
   };
 };
 
-export const buildGeneralHandler = (): IHandler => {
+export const buildGeneralHandler = (params: Params): IHandler => {
+  const category = buildGetCategories(params);
+  const status = buildGetStatuses(params);
+
   return {
-    registerRoutes: buildGeneralRoutes()
+    registerRoutes: buildGeneralRoutes({
+      category,
+      status
+    })
   };
 };

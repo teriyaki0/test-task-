@@ -1,6 +1,6 @@
 import { UseCaseParams } from '@/domain/usecase/types';
 import { IFeedback } from '@/domain/entity/feedback';
-import { ValidationError } from '@/domain/errors';
+import { NotFoundError, ValidationError } from '@/domain/errors';
 
 export type Create = (data: {
   title: string;
@@ -12,10 +12,28 @@ export type Create = (data: {
 
 export const buildCreate = ({ adapter }: UseCaseParams): Create => {
   return async ({ title, description, categoryId, statusId, authorId }) => {
+    
     if (!title || !description || !categoryId || !statusId || !authorId) {
       throw new ValidationError({
         code: 'FEEDBACK_VALIDATION_FAILED',
         message: 'All fields are required.',
+      });
+    }
+
+    const categoryExists = await adapter.categoryRepository.exist(categoryId);
+
+    if (!categoryExists) {
+      throw new NotFoundError({
+        code: 'CATEGORY_NOT_FOUND',
+        message: `Category with ID ${categoryId} not found.`,
+      });
+    }
+
+    const statusExists = await adapter.statusRepository.exist(statusId);
+    if (!statusExists) {
+      throw new NotFoundError({
+        code: 'STATUS_NOT_FOUND',
+        message: `Status with ID ${statusId} not found.`,
       });
     }
 

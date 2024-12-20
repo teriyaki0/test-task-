@@ -13,7 +13,7 @@ export const buildHandler = (params: DeliveryParams): Express.Router => {
     buildAuthHandler(params),
     buildExampleHandler(params),
     buildFeedbackHandler(params),
-    buildGeneralHandler(),
+    buildGeneralHandler(params),
   ]
 
   for (let i = 0; i < handlers.length; i++){

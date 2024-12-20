@@ -136,16 +136,38 @@ export const deleteFeedbackRules = [
  * @openapi
  * components:
  *   rules:
- *     pagination:
+ *     getFeedbacks:
+ * 
+ *       type: object
  *       properties:
  *         page:
  *           type: integer
  *           description: The page number for pagination
+ *           example: 1
  *         pageSize:
  *           type: integer
  *           description: The number of items per page
+ *           example: 10
+ *         category:
+ *           type: string
+ *           description: Filter by category
+ *           example: "electronics"
+ *         status:
+ *           type: string
+ *           description: Filter by status
+ *           example: "active"
+ *         sortBy:
+ *           type: string
+ *           enum: [createdAt, votes]
+ *           description: Sort by field
+ *           example: "createdAt"
+ *         sortOrder:
+ *           type: string
+ *           enum: [asc, desc]
+ *           description: Sort order
+ *           example: "asc"
  */
-export const paginationRules = [
+export const getFeedbacksRules = [
   check('page')
     .optional()
     .isInt({ gt: 0 })
@@ -154,5 +176,21 @@ export const paginationRules = [
     .optional()
     .isInt({ gt: 0 })
     .withMessage('PageSize must be a positive integer greater than 0'),
-  validateSchema,
+  check('category')
+    .optional()
+    .isString()
+    .withMessage('Category must be a string if provided'),
+  check('status')
+    .optional()
+    .isString()
+    .withMessage('Status must be a string if provided'),
+  check('sortBy')
+    .optional()
+    .isIn(['createdAt', 'votes'])
+    .withMessage('SortBy must be either "createdAt" or "votes"'),
+  check('sortOrder')
+    .optional()
+    .isIn(['asc', 'desc'])
+    .withMessage('SortOrder must be either "asc" or "desc"'),
+  validateSchema
 ];

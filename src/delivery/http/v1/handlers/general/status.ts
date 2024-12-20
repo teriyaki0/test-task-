@@ -1,8 +1,17 @@
-import { PrismaClient } from '@prisma/client';
+import { Response } from 'express';
+import { AuthRequest } from '../types';
+import { DeliveryParams } from '@/delivery/types';
 
-const prisma = new PrismaClient();
+type Params = Pick<DeliveryParams, 'status'>;
 
-export const getStatusesFromPrisma = async () => {
-  const statuses = await prisma.status.findMany();
-  return statuses; 
+export type getStatuses = (
+  req: AuthRequest,
+  res: Response
+) => Promise<Response>;
+
+export const buildGetStatuses = ({ status }: Params): getStatuses => {
+  return async (req, res) => {
+    const statuses = await status.list();
+    return res.status(200).json(statuses);
+  };
 };

@@ -1,11 +1,11 @@
-import { Feedback } from '@prisma/client';
+import {Feedback} from '@prisma/client';
 
 export interface IFeedback extends Feedback {}
 
 /**
  * @openapi
  * components:
- *   schemas:
+ *   entities:
  *      Feedback:
  *          required:
  *            - id

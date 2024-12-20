@@ -20,6 +20,7 @@ export const buildUpdateFeedback = ({ feedback }: Params): UpdateFeedback => {
       description,
       categoryId,
       statusId,
+      authorId: req.user?.id
     });
 
     return res.status(200).json(updatedFeedback);

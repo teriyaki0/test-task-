@@ -14,6 +14,7 @@ export const buildDelete = ({ adapter }: UseCaseParams): Delete => {
 
     if (!feedback) {
       throw new NotFoundError({
+        message: 'Feedback not found',
         code: 'FEEDBACK_NOT_FOUND',
       });
     }
