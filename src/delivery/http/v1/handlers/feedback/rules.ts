@@ -1,5 +1,29 @@
-import { check, header } from 'express-validator'
+import { check, header, param } from 'express-validator'
 import { authRequired, validateSchema } from '../../middlewares'
+
+/**
+ * @openapi
+ * components:
+ *   rules:
+ *     upvoteFeedback:
+ *       required:
+ *         - feedbackId
+ *         - userId
+ *       properties:
+ *         feedbackId:
+ *           type: string
+ *           description: The ID of the feedback to upvote
+ *         userId:
+ *           type: string
+ *           description: The ID of the user performing the upvote
+ */
+export const upvoteFeedbackRules = [
+  header('authorization').exists().notEmpty().isString().withMessage('Authorization header is required and must be a string.'),
+  authRequired({}),
+  param('id').exists().notEmpty().isString().withMessage('Feedback ID is required and must be a string.').bail(),
+  validateSchema
+];
+
 
 /**
   * @openapi

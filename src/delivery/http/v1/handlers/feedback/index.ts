@@ -1,24 +1,24 @@
 import Express from 'express';
 import { buildCreateFeedback, CreateFeedback } from './create';
-import { buildGetFeedback, GetFeedback } from './get';
-import { buildGetAllFeedbacks, GetAllFeedbacks } from './getAll';
+import { buildGetByIdFeedback, GetByIdFeedback } from './getById';
 import { buildUpdateFeedback, UpdateFeedback } from './update';
 import { buildDeleteFeedback, DeleteFeedback } from './detete';
 import { DeliveryParams } from '@/delivery/types';
 import { createRouteHandler } from '../../routeHandler';
-import { getFeedbackRules, deleteFeedbackRules, createFeedbackRules, updateFeedbackRules, paginationRules } from './rules';
+import { getFeedbackRules, deleteFeedbackRules, createFeedbackRules, updateFeedbackRules, paginationRules, upvoteFeedbackRules } from './rules';
 import { IHandler } from '../types';
-import { buildGetPaginatedFeedbacks, GetPaginatedFeedbacks } from './pagination';
+import { buildGetFeedbacks, GetFeedbacks } from './get';
+import { buildUpvoteFeedback, UpvoteFeedback } from './upvote';
 
-type Params = Pick<DeliveryParams, 'feedback'>;
+type Params = Pick<DeliveryParams, 'feedback' | 'upvote'>;
 
 export type FeedbackMethods = {
-  pagination: GetPaginatedFeedbacks;
+  get: GetFeedbacks;
   create: CreateFeedback;
-  get: GetFeedback;
+  getById: GetByIdFeedback;
   update: UpdateFeedback;
   delete: DeleteFeedback;
-  getAll: GetAllFeedbacks;
+  upvote: UpvoteFeedback;
 };
 
 const buildFeedbackRoutes = (methods: FeedbackMethods) => {
@@ -27,7 +27,7 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
 
     /**
      * @openapi
-     * /feedback/pagination:
+     * /feedback:
      *   get:
      *     tags: [Feedback]
      *     produces:
@@ -56,30 +56,11 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      *                 $ref: '#/components/schemas/Feedback'
      */
     namespace.get(
-      '/pagination',
+      '/',
       paginationRules,
-      createRouteHandler(methods.pagination)
+      createRouteHandler(methods.get)
     );
 
-    /**
-     * @openapi
-     * /feedback:
-     *   get:
-     *     tags: [Feedback]
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       200:
-     *         description: Retrieved all feedbacks.
-     *         content:
-     *           application/json:
-     *              schema:
-     *                $ref: '#/components/rules/refreshToken'
-     */
-    namespace.get(
-      '/',
-      createRouteHandler(methods.getAll),
-    );
 
     /**
      * @openapi
@@ -133,7 +114,7 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
      */
     namespace.get(
       '/:id',
-      createRouteHandler(methods.get),
+      createRouteHandler(methods.getById),
       getFeedbackRules
     );
 
@@ -194,26 +175,53 @@ const buildFeedbackRoutes = (methods: FeedbackMethods) => {
       deleteFeedbackRules
     );
 
+    /**
+     * @openapi
+     * /feedback/{id}/upvote:
+     *   post:
+     *     tags: [Feedback]
+     *     produces:
+     *       - application/json
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Upvoted feedback.
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Feedback'
+     */
+    namespace.post(
+      '/:id/upvote',
+      upvoteFeedbackRules,
+      createRouteHandler(methods.upvote)
+    );
+
     root.use('/feedback', namespace);
   };
 };
 
 export const buildFeedbackHandler = (params: Params): IHandler => {
+  const upvote = buildUpvoteFeedback(params);
   const create = buildCreateFeedback(params);
-  const get = buildGetFeedback(params);
+  const getById = buildGetByIdFeedback(params);
   const update = buildUpdateFeedback(params);
   const deleteFeedback = buildDeleteFeedback(params);
-  const getAll = buildGetAllFeedbacks(params);
-  const pagination = buildGetPaginatedFeedbacks(params);
+  const get = buildGetFeedbacks(params);
 
   return {
     registerRoutes: buildFeedbackRoutes({
       create,
-      get,
+      getById,
       update,
-      getAll,
       delete: deleteFeedback,
-      pagination
+      get,
+      upvote
     })
   };
 };

@@ -14,6 +14,7 @@ model User {
   avatar     String?
   created_at DateTime   @default(now())
   feedbacks  Feedback[] @relation("UserFeedbacks")
+  upvotes     Upvote[]
 }
 
 model Category {
@@ -44,4 +45,16 @@ model Feedback {
   author      User     @relation("UserFeedbacks", fields: [author_id], references: [id])
   category    Category? @relation("FeedbackCategory", fields: [category_id], references: [id])
   status      Status?   @relation("FeedbackStatus", fields: [status_id], references: [id])
+  upvotes     Upvote[]
+  upvoteCount Int      @default(0)
+}
+
+model Upvote {
+  id          String    @id @default(uuid())
+  user_id     String
+  feedback_id String
+  user        User      @relation(fields: [user_id], references: [id])
+  feedback    Feedback  @relation(fields: [feedback_id], references: [id])
+
+  @@unique([user_id, feedback_id])
 }

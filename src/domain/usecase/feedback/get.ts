@@ -19,6 +19,7 @@ export const buildGet = ({ adapter }: UseCaseParams): Get => {
         created_at: true,
         updated_at: true,
         author_id: true,
+        upvoteCount: true
       },
     });
 
