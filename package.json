@@ -72,5 +72,6 @@
   },
   "engines": {
     "node": ">=20.10.0"
-  }
+  },
+  "repository": "https://github.com/teriyaki0/test-task-.git"
 }
