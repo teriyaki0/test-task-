@@ -35,3 +35,6 @@ API URL: http://localhost:8000/api/v1
 Swagger URL: http://localhost:8000/api/v1/swagger (OpenAPI: http://localhost:8000/api/v1/swagger.json )
 
  (в Swagger находиться вся необходимая документация о проекте)
+ 
+ ![Описание изображения](https://i.imgur.com/bKeNaoy.png)
+
