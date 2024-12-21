@@ -25,7 +25,13 @@ POSTGRES_DB=dev
 
 docker compose up -d --force-recreate db_dev
 
-### 3. Запуск проекта
+### 3. Заполнение базы данных
+
+yarn migrate:dev
+
+yarn seed
+
+### 4. Запуск проекта
 
 yarn start:dev
 
